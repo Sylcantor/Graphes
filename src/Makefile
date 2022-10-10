@@ -1,7 +1,7 @@
 all: mst.out
 
-mst.out: main.o wgraph.o wnodelist.o utility.o
-	gcc -Wextra -Wall -O3 main.o wgraph.o wnodelist.o utility.o -o mst.out
+mst.out: main.o wgraph.o wnodelist.o utility.o unionfind.o
+	gcc -Wextra -Wall -O3 main.o wgraph.o wnodelist.o utility.o unionfind.o -o mst.out
 
 main.o: main.c wnodelist.h wgraph.h utility.h
 	gcc -Wextra -Wall -O3 -c main.c -o main.o
@@ -14,6 +14,9 @@ wgraph.o: wgraph.h wgraph.c utility.h wnodelist.h
 
 wnodelist.o: wnodelist.h wnodelist.c utility.h
 	gcc -Wextra -Wall -O3 -c wnodelist.c -o wnodelist.o
+
+unionfind.o: unionfind.h unionfind.c utility.h wnodelist.h
+	gcc -Wextra -Wall -O3 -c unionfind.c -o unionfind.o
 
 clean:
 	rm *.o

@@ -35,46 +35,44 @@ void usage(char *c){
 	exit(-1);
 }
 
+
+
 void print_list_wedge(wedge* tab, int size){
 	int i =0;
-	while (i<size)
-	{
-		printf("%f",tab[i].weight);
+	fprintf(stderr,"[");
+	for(i=0;i<size-1;i++){
+		fprintf(stderr,"%f, ",tab[i].weight);
 	}
-	
+	fprintf(stderr,"%f]\n",tab[size-1].weight);
 }
 
-wedge* list_wedge(wgraph* G){
+void list_wedge(wgraph* G,wedge* tab){
 
-	wedge list[G->m];
+	int k,i;
+	int cpt=0;
+	wedge w;
 
 	
-	//if ( (list = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL ){}
-		//report_error("malloc() error");
-
-
-	wedge w;
-	int k,i;
-	i= 0;
-	k=0;
-
-	while(G->links[i]!=NULL){
-		w.node1 = i;
+	
+	for(i=0;i<G->n;i++){
 		cell* c = G->links[i]->prem;
-		while (c!=NULL)
-		{
-			w.node2 = c->node;
-			w.weight = c->weight;
-			list[k]=w;
+		for(k=0;k<G->degrees[i];k++){
+			//printf("Arrete : %d -> %d\n",i,c->node);
+			//printf("Weight: %f	\n",c->weight);
 
+			w.node1 = i;
+			w.node2 = c ->node;
+			w.weight = c ->weight;
+
+			if(w.node1<w.node2){
+				tab[cpt] = w;
+				cpt++;
+			}
 			c = c->suiv;
-			k++;
+			//printf("k : %d\n",k);
 		}
-		
-		i++;
-	}	
-
-	return list;
+	}
+	
 }
 
 
@@ -186,11 +184,31 @@ int main(int argc, char **argv){
 	fprintf(stderr,"Il y a %d sommets et %d aretes !\n",G->n,G->m);
 
 
-	wedge* tab = list_wedge(G);
+	//fprintf(stderr,"Il y a %d voisins !\n",G->degrees[4]);
+
+
+	wedge* tab;
+	
+
+
+	if ( (tab = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
+		report_error("malloc() error");
+
+
+	//fprintf(stderr,"G->m :%d\n",G->m);
+	
+	list_wedge(G,tab);
+	//fprintf(stderr,"G->m :%ld\n",(size_t)(G->m));
+
+	qsort(tab,(size_t)(G->m),sizeof(wedge),comp_wedge);
+	print_list_wedge(tab,G->m);
+
 
 	free_wgraph(G);
 	free(tab);
-	print_list_wedge(tab,G->m);
+
+	
+
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
   
