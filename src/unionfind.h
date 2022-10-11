@@ -1,3 +1,6 @@
+
+
+
 #ifndef _UNIONFIND_
 
 #define _UNIONFIND_
@@ -11,9 +14,9 @@ typedef struct partition{
   int nb_element;
   int nb_partition;
   int* element_id_partition;
-  int** node_list;
+  nodl** node_list;
   int* node_l_nb;
-} partition ;
+} partition;
 
 
 //////////////////////////////////////////////////////
@@ -33,5 +36,9 @@ int find(partition* p, int id_element);
 // precondition: p est non null et *p est initalise
 // postcondition: la partition la plus grande est actualise en ajoutant l autre partition
 void make_union(partition* p, int id_elt_1, int id_elt_2);
+
+
+void free_partition(partition* p);
+
 
 #endif

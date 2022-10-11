@@ -3,7 +3,7 @@ all: mst.out
 mst.out: main.o wgraph.o wnodelist.o utility.o unionfind.o
 	gcc -Wextra -Wall -O3 main.o wgraph.o wnodelist.o utility.o unionfind.o -o mst.out
 
-main.o: main.c wnodelist.h wgraph.h utility.h
+main.o: main.c wnodelist.h wgraph.h utility.h unionfind.h
 	gcc -Wextra -Wall -O3 -c main.c -o main.o
 
 utility.o: utility.h utility.c

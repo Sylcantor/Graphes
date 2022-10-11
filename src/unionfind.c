@@ -28,31 +28,29 @@ void init_partition(partition* p, int n){
             p->element_id_partition[i] = i;
         }
 
-        if( (p->node_list =(int**)malloc(p->nb_element*sizeof(int*))) == NULL )
+        if( (p->node_list =(nodl**)malloc(p->nb_element*sizeof(nodl*))) == NULL )
             report_error("init_partition: malloc() error");
         for(i=0;i<p->nb_element;i++){
-            if( (p->node_list[i] =(int*)malloc(p->nb_element*sizeof(int))) == NULL )
+            if( (p->node_list[i] =(nodl*)malloc(p->nb_element*sizeof(nodl))) == NULL )
                 report_error("init_partition: malloc() error");
-            p->node_list[i][0] = i;
+
+            inserer_en_tete(i,0,p->node_list[i]);
         }
 
         if( (p->node_l_nb =(int*)malloc(p->nb_element*sizeof(int))) == NULL )
             report_error("init_partition: malloc() error");
-        for(i=0;i<p->node_l_nb;i++){
+        for(i=0;i<p->nb_element;i++){
             p->node_l_nb[i] = 1;
         }
     }
 }
 
 int find(partition* p, int id_element){
-    return(p->element_id_partition[id_element]);
+    return p->element_id_partition[id_element];
 }
 
-void make_union(partition* p, int id_elt_1, int id_elt_2){
+void make_union(partition* p, int groupe_1, int groupe_2){
     int tmp,i;
-
-    int groupe_1 = find(p,id_elt_1);
-    int groupe_2 = find(p,id_elt_2);
 
     int grp_1_nb_elt = p->node_l_nb[groupe_1];
     int grp_2_nb_elt = p->node_l_nb[groupe_2];
@@ -73,11 +71,29 @@ void make_union(partition* p, int id_elt_1, int id_elt_2){
         grp_1_nb_elt = grp_2_nb_elt;
         grp_2_nb_elt = tmp;
     }
+    /// MERGE
 
-    for(i=0;i<grp_2_nb_elt;i++){
-        p->element_id_partition[p->node_list[groupe_2][i]] = groupe_1;
-
-        p->node_list[groupe_1][p->node_l_nb[groupe_1]+i] = p->node_list[groupe_2][i];
-        // A verifier
+    //update id groupe
+    cell* q; 
+    for(q=p->node_list[groupe_2]->prem ; q!=p->node_list[groupe_2]->dern ; q=q->suiv){ 
+        p->element_id_partition[q->node] = groupe_1;
     }
+
+    // merging groupe
+    p->node_list[groupe_1]->dern->suiv = p->node_list[groupe_2]->prem;
+    p->node_list[groupe_1]->prem->prec = p->node_list[groupe_2]->dern;
+
+    p->node_list[groupe_2]->dern->suiv = p->node_list[groupe_1]->prem;
+    p->node_list[groupe_2]->prem->prec = p->node_list[groupe_1]->dern;
+    
+    p->node_list[groupe_1]->dern = p->node_list[groupe_2]->dern;
+
+    p->node_l_nb[groupe_1] += p->node_l_nb[groupe_2];
+    p->node_l_nb[groupe_2] = 0;
+    
+    free_nodl(p->node_list[groupe_2]);
+}
+
+void free_partition(partition* p){
+    free(p);
 }

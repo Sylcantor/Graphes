@@ -13,7 +13,7 @@
 #include "utility.h"
 #include "wnodelist.h"
 #include "wgraph.h"
-
+#include "unionfind.h"
 
 /******************/
 /* Default values */
@@ -37,23 +37,21 @@ void usage(char *c){
 
 
 
-void print_list_wedge(wedge* tab, int size){
+void print_list_wedge(wedge* list_wedge_sorted, int size){
 	int i =0;
 	fprintf(stderr,"[");
 	for(i=0;i<size-1;i++){
-		fprintf(stderr,"%f, ",tab[i].weight);
+		fprintf(stderr,"%f, ",list_wedge_sorted[i].weight);
 	}
-	fprintf(stderr,"%f]\n",tab[size-1].weight);
+	fprintf(stderr,"%f]\n",list_wedge_sorted[size-1].weight);
 }
 
-void list_wedge(wgraph* G,wedge* tab){
+void list_wedge(wgraph* G,wedge* list_wedge_sorted){
 
 	int k,i;
 	int cpt=0;
 	wedge w;
 
-	
-	
 	for(i=0;i<G->n;i++){
 		cell* c = G->links[i]->prem;
 		for(k=0;k<G->degrees[i];k++){
@@ -65,13 +63,17 @@ void list_wedge(wgraph* G,wedge* tab){
 			w.weight = c ->weight;
 
 			if(w.node1<w.node2){
-				tab[cpt] = w;
+				list_wedge_sorted[cpt] = w;
 				cpt++;
 			}
 			c = c->suiv;
 			//printf("k : %d\n",k);
 		}
 	}
+	
+}
+
+void add_wedge(wedge* list, int u, int v){
 	
 }
 
@@ -102,6 +104,7 @@ int main(int argc, char **argv){
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	int u,v;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,35 +184,13 @@ int main(int argc, char **argv){
 
 	//fclose(fin);
 
-	fprintf(stderr,"Il y a %d sommets et %d aretes !\n",G->n,G->m);
+	//fprintf(stderr,"Il y a %d sommets et %d aretes !\n",G->n,G->m);
 
 
 	//fprintf(stderr,"Il y a %d voisins !\n",G->degrees[4]);
-
-
-	wedge* tab;
+	
 	
 
-
-	if ( (tab = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
-		report_error("malloc() error");
-
-
-	//fprintf(stderr,"G->m :%d\n",G->m);
-	
-	list_wedge(G,tab);
-	//fprintf(stderr,"G->m :%ld\n",(size_t)(G->m));
-
-	qsort(tab,(size_t)(G->m),sizeof(wedge),comp_wedge);
-	print_list_wedge(tab,G->m);
-
-
-	free_wgraph(G);
-	free(tab);
-
-	
-
-	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 
@@ -221,8 +202,25 @@ int main(int argc, char **argv){
   
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	wedge* list_wedge_sorted;
+	if ( (list_wedge_sorted = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
+		report_error("malloc() error");
+	list_wedge(G,list_wedge_sorted);
+	qsort(list_wedge_sorted,(size_t)(G->m),sizeof(wedge),comp_wedge);
 
-  
+	wedge* kruslal_tree;
+	if ( (kruslal_tree = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
+		report_error("malloc() error");
+
+
+	partition* p;
+	if ( (p = (partition*) malloc((G->n)*sizeof(partition))) == NULL)
+		report_error("malloc() error");
+
+	init_partition(p,G->n);
+
+	//print_list_wedge(list_wedge_sorted,G->m);
   
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
   
@@ -238,6 +236,14 @@ int main(int argc, char **argv){
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	for(i=0;i<G->m;i++){
+		u = list_wedge_sorted[i].node1;
+		v = list_wedge_sorted[i].node2;
+		if(find(p,u)!=find(p,v)){
+			fprintf(stderr,"In progress.\n"); //TODO
+			kruslal_tree[0] = w
+		}
+	}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,7 +293,8 @@ int main(int argc, char **argv){
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+	if(G!=NULL) free_wgraph(G);
+	if(list_wedge_sorted!=NULL) free(list_wedge_sorted);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
