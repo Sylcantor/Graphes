@@ -241,7 +241,7 @@ int main(int argc, char **argv){
 		v = list_wedge_sorted[i].node2;
 		if(find(p,u)!=find(p,v)){
 			fprintf(stderr,"In progress.\n"); //TODO
-			kruslal_tree[0] = w
+			//kruslal_tree[0] = w;
 		}
 	}
 
