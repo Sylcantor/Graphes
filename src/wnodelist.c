@@ -138,6 +138,23 @@ void supprimer (cell* p, nodl* l){
 // LIBERER UNE NODELIST ET TOUTES SES CELLULES
 // precondition: aucune
 // postcondition: la liste pointee par l est detruite
+
+/*
+// free the list and all its cells
+void free_nodl (nodl* l) {
+	cell* p;
+	cell* q;
+	p=l->prem;
+	while (p!=NULL) {
+		q=p->suiv;
+		free(p);
+		p=q;
+	}
+	l->prem=NULL;
+	l->dern=NULL;
+}
+*/
+
 void free_nodl(nodl* l) {
 	if (l!=NULL){
 		while (l->prem!=NULL) {

@@ -49,6 +49,7 @@ int find(partition* p, int id_element){
     return p->element_id_partition[id_element];
 }
 
+
 void make_union(partition* p, int groupe_1, int groupe_2){
     int tmp,i;
 
@@ -91,7 +92,7 @@ void make_union(partition* p, int groupe_1, int groupe_2){
     p->node_l_nb[groupe_1] += p->node_l_nb[groupe_2];
     p->node_l_nb[groupe_2] = 0;
     
-    free_nodl(p->node_list[groupe_2]);
+    //free_nodl(p->node_list[groupe_2]);
 }
 
 void free_partition(partition* p){

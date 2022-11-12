@@ -14,6 +14,8 @@
 #include "wnodelist.h"
 #include "wgraph.h"
 #include "unionfind.h"
+#include "priorite.h"
+
 
 /******************/
 /* Default values */
@@ -203,6 +205,7 @@ int main(int argc, char **argv){
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	//Kruskal
 	wedge* list_wedge_sorted;
 	if ( (list_wedge_sorted = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
 		report_error("malloc() error");
@@ -210,7 +213,7 @@ int main(int argc, char **argv){
 	qsort(list_wedge_sorted,(size_t)(G->m),sizeof(wedge),comp_wedge);
 
 	wedge* kruslal_tree;
-	if ( (kruslal_tree = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
+	if ( (kruslal_tree = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL ) // à changer pas G->n-1 ?
 		report_error("malloc() error");
 
 
@@ -220,8 +223,50 @@ int main(int argc, char **argv){
 
 	init_partition(p,G->n);
 
+
 	//print_list_wedge(list_wedge_sorted,G->m);
-  
+
+	//Prim (question 3.2 à suivre)
+
+	//Dans l’algorithme de Prim, independemment de l’implementation de la file de priorite,
+	//on a besoin d’avoir acces en temps constant a certaines informations sur un sommet. A
+	//cette fin, on va utiliser, en plus de la file, trois tableaux :
+	//— un tableau de taille n qui a chaque sommet associe un booleen qui dit si le sommet
+	//est dans la file (sommet blanc) ou non (sommet noir ).
+	//— un tableau de taille n qui a chaque sommet blanc associe son poids, defini comme
+	//le poids minimum d’une arete le reliant a un voisin noir
+	//— un tableau de taille n qui a chaque sommet blanc associe son pere, un de ses voisins
+	//noirs qui lui est relie par une arete de poids minimum.
+
+    // initialize pqueue
+	pqueue* q;
+	if ( (q = (pqueue*) malloc(sizeof(pqueue))) == NULL)
+		report_error("malloc() error");	
+	init_pqueue(q,G->n);
+
+	int* in_queue;
+	if ( (in_queue = (int*) malloc((G->n)*sizeof(int))) == NULL )
+		report_error("malloc() error");
+	
+	int* weight;
+	if ( (weight = (int*) malloc((G->n)*sizeof(int))) == NULL )
+		report_error("malloc() error");
+	
+	int* father;
+	if ( (father = (int*) malloc((G->n)*sizeof(int))) == NULL )
+		report_error("malloc() error");
+	
+	//initialisation
+	for (i=0; i<G->n; i++) {
+		in_queue[i]=1;
+		weight[i]=INT_MAX;
+		father[i]=-1;
+	}
+	
+	//cellule c
+	cell* c;
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   
@@ -236,14 +281,68 @@ int main(int argc, char **argv){
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//Kruskal algorithm implementation with union-find data structure (à revoir)
+
 	for(i=0;i<G->m;i++){
 		u = list_wedge_sorted[i].node1;
 		v = list_wedge_sorted[i].node2;
 		if(find(p,u)!=find(p,v)){
-			fprintf(stderr,"In progress.\n"); //TODO
-			//kruslal_tree[0] = w;
+			kruslal_tree[i] = list_wedge_sorted[i];  // si on change au dessus par G->n-1, il faut changer ici aussi avec un compteur pour l'indice du tableau kruslal_tree
+			//printf("Arrete : %d -> %d\n",u,v);
+			//printf("Weight: %f	\n",list_wedge_sorted[i].weight);
+			make_union(p,u,v);
 		}
 	}
+
+
+	  /*
+		for(i=0;i<G->m;i++){
+			u = list_wedge_sorted[i].node1;
+			v = list_wedge_sorted[i].node2;
+			if(find(p,u)!=find(p,v)){
+				fprintf(stderr,"In progress.\n"); //TODO
+				//kruslal_tree[0] = w;
+			}	
+		}
+	*/
+	//////////////////////////////////////////
+
+
+
+
+
+	//Prime algorithm implementation with priotie structure and three arrays
+
+
+	
+	while(!isempty_pqueue(q)){
+		u = extractmin_pqueue(q);
+		in_queue[u] = 0;
+
+		// neighbor of u
+		c = G->links[u]->prem;
+		for(i=0;i<G->degrees[u];i++){
+			// if v is in queue and weight of edge (u,v) is less than weight of v
+			if(in_queue[c->node] && c->weight < weight[c->node]){
+				// update weight of v
+				weight[c->node] = c->weight;  // ici il faudrait mettre le poid dans un tableau de wedge
+
+
+
+				// update father of v
+				father[c->node] = u;
+				// update priority queue
+				update_pqueue(q,c->node,c->weight);
+
+			}
+			c = c->suiv;
+		}
+	}
+	
+  
+
+	
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,13 +355,17 @@ int main(int argc, char **argv){
 ///////////////////////////////////////////////////////////
 
 
-  fprintf(stderr,"\nOutputing results.\n");
-  fflush(stderr);
+	fprintf(stderr,"\nOutputing results.\n");
+  	fflush(stderr);
 
 
 /////////////////////////////////////////////   A FAIRE   ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//afficher le resultat kruskal
+	for(i=0;i<G->n-1;i++){
+		fprintf(fout,"%d %d %f\n",kruslal_tree[i].node1,kruslal_tree[i].node2,kruslal_tree[i].weight);
+	}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
