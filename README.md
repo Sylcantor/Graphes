@@ -1,6 +1,6 @@
 # Graphes
 
-Minimum weight spanning tree with implementation of Kruskal and Prim algorithms.
+Minimum weight spanning tree with implementation of Kruskal and Prim algorithms.  
 Question 30 and above are not implemented.
 
 # Git clone
