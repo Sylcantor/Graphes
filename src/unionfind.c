@@ -6,10 +6,6 @@
 #include "utility.h"
 #include "unionfind.h"
 
-//////////////////////////////////////////////////////
-// INITIALISER UNE PARTITION
-// precondition: 
-// postcondition: 
 void init_partition(partition* p, int n){
 
     int i;
@@ -65,31 +61,12 @@ void make_union(partition* p, int id_groupe_1, int id_groupe_2){
     }
     p->node_l_nb[id_groupe_1] += p->node_l_nb[id_groupe_2];
     p->node_l_nb[id_groupe_2] = 0;
-
-    /*
-    if(p->node_l_nb[id_groupe_1] > p->node_l_nb[id_groupe_2]){
-        for(i=0;i<p->nb_element;i++){
-            if(p->element_id_partition[i] == id_groupe_2){
-                p->element_id_partition[i] = id_groupe_1;
-            }
-        }
-        p->node_l_nb[id_groupe_1] += p->node_l_nb[id_groupe_2];
-        p->node_l_nb[id_groupe_2] = 0;
-    }
-    else{
-        
-        for(i=0;i<p->nb_element;i++){
-            if(p->element_id_partition[i] == id_groupe_1){
-                p->element_id_partition[i] = id_groupe_2;
-            }
-        }
-        p->node_l_nb[id_groupe_2] += p->node_l_nb[id_groupe_1];
-        p->node_l_nb[id_groupe_1] = 0;
-    }
-    */
 }
 
 
 void free_partition(partition* p){
+    free(p->element_id_partition);
+    free(p->node_l_nb);
+    free(p->node_list);
     free(p);
 }

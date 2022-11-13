@@ -33,8 +33,8 @@ int isempty_pqueue(pqueue *q){
 }
 
 int extractmin_pqueue(pqueue *q){
-    int min=0;                        // good if the value can be the same
-    for(int i=0; i<q->capacity; i++){ //as "Infinity" value, instead do  : min = INFINITY and pass the first loop
+    int min=0;
+    for(int i=0; i<q->capacity; i++){
         if(q->present[i] == 1){
             min = i;
             break;

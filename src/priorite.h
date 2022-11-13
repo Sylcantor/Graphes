@@ -16,7 +16,6 @@ typedef struct pqueue {
  * Create a new priority queue
  * @param n the number of elements in the queue
 */
-
 void init_pqueue(pqueue *q, int n);
 
 /**
@@ -47,6 +46,5 @@ int extractmin_pqueue(pqueue *q);
  * @param q the queue
 */  
 void free_pqueue(pqueue *q);
-
 
 #endif
