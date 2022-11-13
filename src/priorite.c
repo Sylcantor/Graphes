@@ -53,4 +53,5 @@ int extractmin_pqueue(pqueue *q){
 void free_pqueue(pqueue *q){
     free(q->value);
     free(q->present);
+    free(q);
 }
