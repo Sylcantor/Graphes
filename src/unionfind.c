@@ -49,51 +49,31 @@ int find(partition* p, int id_element){
     return p->element_id_partition[id_element];
 }
 
-
 void make_union(partition* p, int groupe_1, int groupe_2){
-    int tmp,i;
-
-    int grp_1_nb_elt = p->node_l_nb[groupe_1];
-    int grp_2_nb_elt = p->node_l_nb[groupe_2];
-
-    if(grp_1_nb_elt==grp_2_nb_elt){
-        if(groupe_2>groupe_1){
-            tmp = groupe_1;
-            groupe_1 = groupe_2;
-            groupe_2 = tmp;
+    int i;
+    int id_groupe_1 = find(p,groupe_1);
+    int id_groupe_2 = find(p,groupe_2);
+    
+    if(p->node_l_nb[id_groupe_1] > p->node_l_nb[id_groupe_2]){
+        for(i=0;i<p->nb_element;i++){
+            if(p->element_id_partition[i] == id_groupe_2){
+                p->element_id_partition[i] = id_groupe_1;
+            }
         }
+        p->node_l_nb[id_groupe_1] += p->node_l_nb[id_groupe_2];
+        p->node_l_nb[id_groupe_2] = 0;
     }
-    else if(grp_2_nb_elt>grp_1_nb_elt){
-        tmp = groupe_1;
-        groupe_1 = groupe_2;
-        groupe_2 = tmp;
-
-        tmp = grp_1_nb_elt;
-        grp_1_nb_elt = grp_2_nb_elt;
-        grp_2_nb_elt = tmp;
+    else{
+        for(i=0;i<p->nb_element;i++){
+            if(p->element_id_partition[i] == id_groupe_1){
+                p->element_id_partition[i] = id_groupe_2;
+            }
+        }
+        p->node_l_nb[id_groupe_2] += p->node_l_nb[id_groupe_1];
+        p->node_l_nb[id_groupe_1] = 0;
     }
-    /// MERGE
-
-    //update id groupe
-    cell* q; 
-    for(q=p->node_list[groupe_2]->prem ; q!=p->node_list[groupe_2]->dern ; q=q->suiv){ 
-        p->element_id_partition[q->node] = groupe_1;
-    }
-
-    // merging groupe
-    p->node_list[groupe_1]->dern->suiv = p->node_list[groupe_2]->prem;
-    p->node_list[groupe_1]->prem->prec = p->node_list[groupe_2]->dern;
-
-    p->node_list[groupe_2]->dern->suiv = p->node_list[groupe_1]->prem;
-    p->node_list[groupe_2]->prem->prec = p->node_list[groupe_1]->dern;
-    
-    p->node_list[groupe_1]->dern = p->node_list[groupe_2]->dern;
-
-    p->node_l_nb[groupe_1] += p->node_l_nb[groupe_2];
-    p->node_l_nb[groupe_2] = 0;
-    
-    //free_nodl(p->node_list[groupe_2]);
 }
+
 
 void free_partition(partition* p){
     free(p);

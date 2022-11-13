@@ -8,14 +8,6 @@
 
 #define INFINITY 1000000000 // a revoir
 
-
-typedef struct pqueue {
-    int capacity;
-    int size;
-    float *value;
-    int *present; // boolean
-} pqueue;
-
 void init_pqueue(pqueue *q, int n){
     q->capacity = n;
     q->size = 0;
@@ -43,7 +35,13 @@ int isempty_pqueue(pqueue *q){
 }
 
 int extractmin_pqueue(pqueue *q){
-    int min = 0;
+    int min=0;
+    for(int i=0; i<q->capacity; i++){
+        if(q->present[i] == 1){
+            min = i;
+            break;
+        }
+    }
     for(int i=0; i<q->capacity; i++){
         if(q->present[i] && q->value[i] < q->value[min]){
             min = i;

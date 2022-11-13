@@ -1,6 +1,6 @@
 all: mst.out
 
-mst.out: main.o wgraph.o wnodelist.o utility.o unionfind.o priorite.h
+mst.out: main.o wgraph.o wnodelist.o utility.o unionfind.o priorite.o
 	gcc -Wextra -Wall -O3 main.o wgraph.o wnodelist.o utility.o unionfind.o priorite.o -o mst.out
 
 main.o: main.c wnodelist.h wgraph.h utility.h unionfind.h priorite.h
@@ -18,7 +18,7 @@ wnodelist.o: wnodelist.h wnodelist.c utility.h
 unionfind.o: unionfind.h unionfind.c utility.h wnodelist.h
 	gcc -Wextra -Wall -O3 -c unionfind.c -o unionfind.o
 
-priorite.o : priorite.c utility.h
+priorite.o: priorite.c utility.h
 	gcc -Wextra -Wall -O3 -c priorite.c -o priorite.o
 
 clean:
