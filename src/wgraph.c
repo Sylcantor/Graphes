@@ -6,7 +6,7 @@
 #include "wgraph.h"
 
 #define MAX_LINE_LENGTH 1000
-
+#define MAX 10.0
 
 ///////////////////////////////////////////////////////////
 ////////////   GRAPH MANAGEMENT FUNCTIONS   ///////////////
@@ -57,6 +57,29 @@ wgraph* wgraph_from_file(FILE *f){
 
   /* read the links */
   while (fgets(line,MAX_LINE_LENGTH,f) != NULL ){
+    int cpt = sscanf(line, "%d %d %f\n", &u, &v, &p);
+    if(cpt < 2 ){
+      fprintf(stderr,"Attempt to scan link #%d failed. Line read:%s\n", i, line);
+      report_error("wgraph_from_file; read error (sscanf) 3");
+    }
+    else if (cpt == 2)
+    {
+      p = (float)rand()/(float)(RAND_MAX/MAX);
+    }
+    
+    if ( (u>=g->n) || (v>=g->n) || (u<0) || (v<0) ) {
+      fprintf(stderr,"Line just read: %s",line);
+  
+      report_error("wgraph_from_file: bad node number");
+    }
+    
+    inserer_en_queue(v, p, g->links[u]);
+    inserer_en_queue(u, p, g->links[v]);
+    g->degrees[u]++;
+    g->degrees[v]++;
+  }
+  /*
+  while (fgets(line,MAX_LINE_LENGTH,f) != NULL ){
     if( sscanf(line, "%d %d %f\n", &u, &v, &p) != 3 ){
       fprintf(stderr,"Attempt to scan link #%d failed. Line read:%s\n", i, line);
       report_error("wgraph_from_file; read error (sscanf) 3");
@@ -71,6 +94,7 @@ wgraph* wgraph_from_file(FILE *f){
     g->degrees[u]++;
     g->degrees[v]++;
   }
+  */
   
   /* compute the number of links */
   g->m=0;

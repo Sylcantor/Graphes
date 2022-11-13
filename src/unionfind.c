@@ -49,11 +49,24 @@ int find(partition* p, int id_element){
     return p->element_id_partition[id_element];
 }
 
-void make_union(partition* p, int groupe_1, int groupe_2){
+void make_union(partition* p, int id_groupe_1, int id_groupe_2){
     int i;
-    int id_groupe_1 = find(p,groupe_1);
-    int id_groupe_2 = find(p,groupe_2);
     
+    if(p->node_l_nb[id_groupe_2] > p->node_l_nb[id_groupe_1]){
+        int tmp_id_grp = id_groupe_1;
+        id_groupe_1 = id_groupe_2;
+        id_groupe_2 = tmp_id_grp;
+    }
+
+    for(i=0;i<p->nb_element;i++){
+        if(p->element_id_partition[i] == id_groupe_2){
+            p->element_id_partition[i] = id_groupe_1;
+        }
+    }
+    p->node_l_nb[id_groupe_1] += p->node_l_nb[id_groupe_2];
+    p->node_l_nb[id_groupe_2] = 0;
+
+    /*
     if(p->node_l_nb[id_groupe_1] > p->node_l_nb[id_groupe_2]){
         for(i=0;i<p->nb_element;i++){
             if(p->element_id_partition[i] == id_groupe_2){
@@ -64,6 +77,7 @@ void make_union(partition* p, int groupe_1, int groupe_2){
         p->node_l_nb[id_groupe_2] = 0;
     }
     else{
+        
         for(i=0;i<p->nb_element;i++){
             if(p->element_id_partition[i] == id_groupe_1){
                 p->element_id_partition[i] = id_groupe_2;
@@ -72,6 +86,7 @@ void make_union(partition* p, int groupe_1, int groupe_2){
         p->node_l_nb[id_groupe_2] += p->node_l_nb[id_groupe_1];
         p->node_l_nb[id_groupe_1] = 0;
     }
+    */
 }
 
 

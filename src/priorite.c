@@ -6,11 +6,11 @@
 #include "utility.h"
 #include "priorite.h"
 
-#define INFINITY 1000000000 // a revoir
+#define INFINITY 3.40282e+038 // max float value
 
 void init_pqueue(pqueue *q, int n){
     q->capacity = n;
-    q->size = 0;
+    q->size = n;
     if ((q->value = (float *) malloc(n * sizeof(float))) == NULL) {
         report_error("malloc() error");	
     }
@@ -19,15 +19,13 @@ void init_pqueue(pqueue *q, int n){
     }
     for(int i=0; i<n; i++){
         q->value[i] = INFINITY;
-        q->present[i] = 0;
+        q->present[i] = 1;
     }
 }
 
 
 void update_pqueue(pqueue *q, int i, float v){
     q->value[i] = v;
-    q->present[i] = 1;
-    q->size++;
 }
 
 int isempty_pqueue(pqueue *q){
@@ -35,8 +33,8 @@ int isempty_pqueue(pqueue *q){
 }
 
 int extractmin_pqueue(pqueue *q){
-    int min=0;
-    for(int i=0; i<q->capacity; i++){
+    int min=0;                        // good if the value can be the same
+    for(int i=0; i<q->capacity; i++){ //as "Infinity" value, instead do  : min = INFINITY and pass the first loop
         if(q->present[i] == 1){
             min = i;
             break;
