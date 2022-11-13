@@ -34,10 +34,8 @@ void usage(char *c){
 	fprintf(stderr,"  -h: print current help.\n");
 	fprintf(stderr,"  -i \"inputname\": input file containing the weighted graph (default value is stdin).\n");
 	fprintf(stderr,"  -o \"outputname\": output results in a file named \"outputname\" (default value is stdout).\n");
-
 	fprintf(stderr,"  -k \"kruskal\": use prim algorithm (default value is kruskal).\n");
 	fprintf(stderr,"  -p \"prim\": use prim algorithm (default value is kruskal).\n");
-
 	exit(-1);
 }
 
@@ -224,18 +222,17 @@ int main(int argc, char **argv){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//Kruskal
-	wedge* list_wedge_sorted;
 	wedge* kruslal_tree;
+	wedge* list_wedge_sorted;
 	partition* p;
-
 	if(kruskal==1){
+		if ( (kruslal_tree = (wedge*) malloc((G->n-1)*sizeof(wedge))) == NULL )
+			report_error("malloc() error");
 		if ( (list_wedge_sorted = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
 			report_error("malloc() error");
 		list_wedge(G,list_wedge_sorted);
 		qsort(list_wedge_sorted,(size_t)(G->m),sizeof(wedge),comp_wedge);
 
-		if ( (kruslal_tree = (wedge*) malloc((G->n-1)*sizeof(wedge))) == NULL )
-			report_error("malloc() error");
 
 
 		if ( (p = (partition*) malloc((G->n-1)*sizeof(partition))) == NULL)
@@ -246,15 +243,14 @@ int main(int argc, char **argv){
 
     // Prim
 	wedge* prim_tree;
+	if ( (prim_tree = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
+		report_error("malloc() error");
 	pqueue* q;
 	int* in_queue;
 	float* weight;
 	int* father;
 	cell* c;
 	if(prim==1){
-		if ( (prim_tree = (wedge*) malloc((G->m)*sizeof(wedge))) == NULL )
-			report_error("malloc() error");
-
 		if ( (q = (pqueue*) malloc(sizeof(pqueue))) == NULL)
 			report_error("malloc() error");	
 		init_pqueue(q,G->n);
@@ -398,8 +394,8 @@ int main(int argc, char **argv){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if(G!=NULL) free_wgraph(G);
-	if(list_wedge_sorted!=NULL) free(list_wedge_sorted);
-
+	//if(list_wedge_sorted!=NULL) free(list_wedge_sorted);
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
